@@ -9,7 +9,7 @@ from data_utils import train_valid_loader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def main(data_path='data',batch_size=500, epochs=100, num_classes=10, from_set='test'):
+def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='test'):
     zeronet = ZeroNet(num_classes=num_classes).to(device)
 
     train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size, from_set=from_set)
