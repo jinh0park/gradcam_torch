@@ -10,18 +10,18 @@ from data_utils import train_valid_loader
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='test'):
-    zeronet = ZeroNet(num_classes=num_classes).to(device)
+    model = ZeroNet(num_classes=num_classes).to(device)
 
     train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size, from_set=from_set)
 
-    optimizer = optim.Adam(zeronet.parameters(), lr=1e-3)
+    optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-    zeronet.train()
+    model.train()
     for epoch in range(epochs):
         for batch_index, (X, y) in enumerate(train_loader):
-            zeronet.zero_grad()
+            model.zero_grad()
             X, y = X.to(device), y.to(device)
-            scores = zeronet(X)
+            scores = model(X)
             loss = F.cross_entropy(scores, y)
 
             loss.backward()
@@ -29,18 +29,20 @@ def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='
 
             if batch_index % 1 == 0:
                 train_log = 'Epoch {:2d}/{:2d}\tLoss: {:.6f}\tTrain: [{}/{} ({:.0f}%)]'.format(
-                epoch, epochs, loss.cpu().item(), batch_index, len(train_loader),
-                100. * batch_index / len(train_loader))
+                epoch, epochs, loss.cpu().item(), (batch_index+1), len(train_loader),
+                100. * (batch_index+1) / len(train_loader))
                 print(train_log, end='\r')
         print()
 
         correct = 0.
         last_valid_acc = 0.
+
+        model.eval()
         with torch.no_grad():
             cnt = 0
             for batch_index, (X, y) in enumerate(valid_loader):
                 X, y = X.to(device), y.to(device)
-                scores = zeronet(X)
+                scores = model(X)
                 predict = scores.argmax(dim=-1)
                 correct += predict.eq(y.view_as(predict)).cpu().sum()
                 cnt += predict.size(0)
@@ -49,7 +51,7 @@ def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='
             last_valid_acc = valid_acc
 
     SAVE_PATH = 'saved_model'
-    torch.save(zeronet.state_dict(), SAVE_PATH)
+    torch.save(model.state_dict(), SAVE_PATH)
     with open('valid.txt', 'w') as f:
         f.write(str(last_valid_acc))
 

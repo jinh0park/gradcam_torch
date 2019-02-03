@@ -27,6 +27,9 @@ class ZeroNet(nn.Module):
             nn.Conv2d(128,256,3,stride=1,padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
+            nn.Conv2d(256,256,3,stride=1,padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
             nn.MaxPool2d(2,stride=2),
 
             nn.Conv2d(256,256,3,stride=1,padding=1),
