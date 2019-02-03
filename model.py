@@ -31,20 +31,23 @@ class ZeroNet(nn.Module):
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2,stride=2),
-
+            
+            nn.Conv2d(256,256,3,stride=1,padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
             nn.Conv2d(256,256,3,stride=1,padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2,stride=2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(4*4*256, 256),
+            nn.Linear(4*4*256, 200),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(256, 256),
+            nn.Linear(200, 200),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(256, num_classes),
+            nn.Linear(200, num_classes),
         )
 
     def forward(self,x):
