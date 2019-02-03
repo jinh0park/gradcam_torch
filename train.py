@@ -36,12 +36,15 @@ def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
         correct = 0.
         last_valid_acc = 0.
         with torch.no_grad():
+            cnt = 0
             for batch_index, (X, y) in enumerate(valid_loader):
                 X, y = X.to(device), y.to(device)
                 scores = zeronet(X)
                 predict = scores.argmax(dim=-1)
-                correct += predict.eq(y.view_as(predict)).cpu().sum()
-            valid_acc = correct.cpu().item()/len(valid_loader.dataset)*100
+                correct += predict.eq(y.view_as(predict)).cpu()
+                cnt += correct.size(0)
+                correct = correct.sum()
+            valid_acc = correct.cpu().item()/cnt*100
             print("validation accuracy: {:.2f}%".format(valid_acc))
             last_valid_acc = valid_acc
 
