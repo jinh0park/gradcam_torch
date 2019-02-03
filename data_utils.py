@@ -5,7 +5,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 
 # Reference: https://gist.github.com/kevinzakka/d33bf8d6c7f06a9d8c76d97a7879f5cb
 
-def train_valid_loader(valid_ratio=0.9, data_path='data', batch_size=100):
+def train_valid_loader(valid_ratio=0.1, data_path='data', batch_size=100):
     train_transform = transforms.Compose([
                                     transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),

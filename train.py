@@ -32,6 +32,7 @@ def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
                 epoch, epochs, loss.cpu().item(), batch_index, len(train_loader),
                 100. * batch_index / len(train_loader))
                 print(train_log, end='\r')
+        print()
 
         correct = 0.
         last_valid_acc = 0.
@@ -41,9 +42,8 @@ def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
                 X, y = X.to(device), y.to(device)
                 scores = zeronet(X)
                 predict = scores.argmax(dim=-1)
-                correct += predict.eq(y.view_as(predict)).cpu()
-                cnt += correct.size(0)
-                correct = correct.sum()
+                correct += predict.eq(y.view_as(predict)).cpu().sum()
+                cnt += predict.size(0)
             valid_acc = correct.cpu().item()/cnt*100
             print("validation accuracy: {:.2f}%".format(valid_acc))
             last_valid_acc = valid_acc
