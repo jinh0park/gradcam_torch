@@ -9,7 +9,7 @@ from data_utils import train_valid_loader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def main(data_path='data',batch_size=100, epochs=20, num_classes=10):
+def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
     zeronet = ZeroNet(num_classes=num_classes).to(device)
 
     train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size)
@@ -34,14 +34,14 @@ def main(data_path='data',batch_size=100, epochs=20, num_classes=10):
                 print(train_log, end='\r')
 
         correct = 0.
-        last_valid_acc = 0
+        last_valid_acc = 0.
         with torch.no_grad():
             for batch_index, (X, y) in enumerate(valid_loader):
                 X, y = X.to(device), y.to(device)
                 scores = zeronet(X)
                 predict = scores.argmax(dim=-1)
                 correct += predict.eq(y.view_as(predict)).cpu().sum()
-            valid_acc = correct/len(valid_loader)*100
+            valid_acc = correct.cpu().item()/len(valid_loader.dataset)*100
             print("validation accuracy: {:.2f}%".format(valid_acc))
             last_valid_acc = valid_acc
 
