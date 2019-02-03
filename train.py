@@ -16,8 +16,9 @@ def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='
 
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-    model.train()
+ 
     for epoch in range(epochs):
+        model.train()
         for batch_index, (X, y) in enumerate(train_loader):
             model.zero_grad()
             X, y = X.to(device), y.to(device)
