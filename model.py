@@ -31,7 +31,7 @@ class ZeroNet(nn.Module):
             nn.Conv2d(256,256,3,stride=1,padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(2,stride=2),
+           
         )
         self.classifier = nn.Sequential(
             nn.Linear(6*6*256, 1024),

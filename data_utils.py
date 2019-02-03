@@ -5,7 +5,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 
 # Reference: https://gist.github.com/kevinzakka/d33bf8d6c7f06a9d8c76d97a7879f5cb
 
-def train_valid_loader(valid_ratio=0.1, data_path='data', batch_size=100):
+def train_valid_loader(valid_ratio=0.1, data_path='data', batch_size=100, from_set='train'):
     train_transform = transforms.Compose([
                                     transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
@@ -15,8 +15,8 @@ def train_valid_loader(valid_ratio=0.1, data_path='data', batch_size=100):
                                     transforms.ToTensor(),
                                     ])
 
-    train_dataset = torchvision.datasets.STL10(data_path, split='train', download=True, transform=train_transform)
-    valid_dataset = torchvision.datasets.STL10(data_path, split='train', download=True, transform=valid_transform)
+    train_dataset = torchvision.datasets.STL10(data_path, split=from_set, download=True, transform=train_transform)
+    valid_dataset = torchvision.datasets.STL10(data_path, split=from_set, download=True, transform=valid_transform)
 
     num_train = len(train_dataset)
     indices = list(range(num_train))

@@ -9,10 +9,10 @@ from data_utils import train_valid_loader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
+def main(data_path='data',batch_size=500, epochs=100, num_classes=10, from_set='test'):
     zeronet = ZeroNet(num_classes=num_classes).to(device)
 
-    train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size)
+    train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size, from_set=from_set)
 
     optimizer = optim.Adam(zeronet.parameters(), lr=1e-3)
 
@@ -27,7 +27,7 @@ def main(data_path='data',batch_size=500, epochs=50, num_classes=10):
             loss.backward()
             optimizer.step()
 
-            if batch_index % 10 == 0:
+            if batch_index % 1 == 0:
                 train_log = 'Epoch {:2d}/{:2d}\tLoss: {:.6f}\tTrain: [{}/{} ({:.0f}%)]'.format(
                 epoch, epochs, loss.cpu().item(), batch_index, len(train_loader),
                 100. * batch_index / len(train_loader))
