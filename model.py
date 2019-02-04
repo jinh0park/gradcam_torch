@@ -4,7 +4,11 @@ import torch.functional as F
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
 class ZeroNet(nn.Module):
+    '''
+    Model architecture is almost same to VGGnet-11.
+    '''
     def __init__(self, num_classes):
         super().__init__()
         self.features = nn.Sequential(
@@ -31,7 +35,7 @@ class ZeroNet(nn.Module):
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2,stride=2),
-            
+
             nn.Conv2d(256,256,3,stride=1,padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
