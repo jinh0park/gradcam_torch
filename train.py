@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from model import ZeroNet
-from data_utils import train_valid_loader, STL10Loader
+from data_utils import STL10Loader
 from torch.optim.lr_scheduler import StepLR
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
