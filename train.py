@@ -5,19 +5,22 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from model import ZeroNet
-from data_utils import train_valid_loader
+from data_utils import train_valid_loader, STL10Loader
 from torch.optim.lr_scheduler import StepLR
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def main(data_path='data',batch_size=500, epochs=150, num_classes=10, from_set='test'):
+def main(data_path='data',batch_size=10, epochs=150, num_classes=10):
     model = ZeroNet(num_classes=num_classes).to(device)
 
-    train_loader, valid_loader = train_valid_loader(data_path=data_path, batch_size=batch_size, from_set=from_set)
+    stl10 = STL10Loader()
+
+    train_loader = stl10.get_loader('train')
+    valid_loader = stl10.get_loader('valid')
 
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     scheduler = StepLR(optimizer, step_size=50, gamma=0.1)
- 
+
     for epoch in range(epochs):
         scheduler.step()
         model.train()

@@ -5,33 +5,45 @@ from torch.utils.data.sampler import SubsetRandomSampler
 
 # Reference: https://gist.github.com/kevinzakka/d33bf8d6c7f06a9d8c76d97a7879f5cb
 
-def train_valid_loader(valid_ratio=0.1, data_path='data', batch_size=100, from_set='train'):
-    train_transform = transforms.Compose([
-                                    transforms.RandomHorizontalFlip(),
-                                    transforms.ToTensor(),
-                                    ])
+class STL10Loader:
+    def __init__(self, data_path='data', batch_size=100):
+        train_transform = transforms.Compose([
+                                        transforms.RandomHorizontalFlip(),
+                                        transforms.ToTensor(),
+                                        ])
+        test_trainsform = transforms.Compose([
+                                        transforms.ToTensor(),
+                                        ])
+        self.dataset = {
+            'train': torchvision.datasets.STL10(data_path, split='train', download=True, transform=train_transform),
+            'test': torchvision.datasets.STL10(data_path, split='test', download=True, transform=test_trainsform)
+        }
+        self.batch_size = batch_size
 
-    valid_transform = transforms.Compose([
-                                    transforms.ToTensor(),
-                                    ])
+    def get_loader(self, split):
+        if split == 'train':
+            # Loader for Train Set
+            loader = torch.utils.data.DataLoader(
+                self.dataset['test'], batch_size=self.batch_size
+            )
+        else:
+            num_test = len(self.dataset['test'])
+            indices = list(range(num_test))
+            s = int(0.8 * num_test)
+            test_idx, valid_idx = indices[:s], indices[s:]
+            test_sampler = SubsetRandomSampler(test_idx)
+            valid_sampler = SubsetRandomSampler(valid_idx)
 
-    train_dataset = torchvision.datasets.STL10(data_path, split=from_set, download=True, transform=train_transform)
-    valid_dataset = torchvision.datasets.STL10(data_path, split=from_set, download=True, transform=valid_transform)
-
-    num_train = len(train_dataset)
-    indices = list(range(num_train))
-
-    split = int((1-valid_ratio) * num_train)
-
-    train_idx, valid_idx = indices[:split], indices[split:]
-    train_sampler = SubsetRandomSampler(train_idx)
-    valid_sampler = SubsetRandomSampler(valid_idx)
-
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=batch_size, sampler=train_sampler,
-    )
-    valid_loader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=batch_size, sampler=valid_sampler,
-    )
-
-    return (train_loader, valid_loader)
+            if split == 'valid':
+                loader = torch.utils.data.DataLoader(
+                # Loader for Valid Set
+                    self.dataset['train'], batch_size=self.batch_size, sampler=valid_sampler
+                )
+            elif split == 'test':
+                # Loader for Test Set
+                loader = torch.utils.data.DataLoader(
+                    self.dataset['train'], batch_size=self.batch_size, sampler=test_sampler
+                )
+            else:
+                raise Exception("Unexpected split.")
+        return loader
