@@ -45,13 +45,13 @@ class ZeroNet(nn.Module):
             nn.MaxPool2d(2,stride=2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(4*4*256, 200),
+            nn.Linear(4*4*256, 144),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(200, 200),
+            nn.Linear(144, 144),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(200, num_classes),
+            nn.Linear(144, num_classes),
         )
 
     def forward(self,x):
@@ -59,3 +59,13 @@ class ZeroNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
+
+    def get_n_params(self):
+    # https://discuss.pytorch.org/t/how-do-i-check-the-number-of-parameters-of-a-model/4325/7
+        pp=0
+        for p in list(self.parameters()):
+            nn=1
+            for s in list(p.size()):
+                nn = nn*s
+            pp += nn
+        return pp
