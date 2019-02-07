@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from model import ZeroNet
 import numpy as np
 from PIL import Image
@@ -45,16 +46,22 @@ def main(num_result=(3,3)):
 
         for i, item in enumerate(result_set):
             model.zero_grad()
-            X_sample, y_sample =item
+            X_sample, y_sample = item
             features = model.features(X_sample)
-            scores = model(X_sample)
-            scores.squeeze()[y].backward()
+            features.requires_grad_()
+            features_shape = features.size()
+            features = features.view(features.size(0), -1)
+            scores = model.classifier(features)
+            s = scores.squeeze()[y]
+            features.retain_grad()
+            s.backward()
 
-            A = features.squeeze()
+            A = features.grad.view(*features_shape).squeeze()
             alpha = A.sum(dim=(1,2)) / (A.size(1) * A.size(2))
             alpha, A = alpha.detach().numpy(), A.detach().numpy()
             L_gradcam = alpha.reshape(-1,1,1) * A
             L_gradcam = L_gradcam.sum(axis=0)
+            L_gradcam = np.maximum(L_gradcam, 0)
 
             with TemporaryFile() as img_origin, TemporaryFile() as img_gradcam:
                 # [Reference] How to get rid of everything beside the image:

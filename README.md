@@ -26,7 +26,7 @@ python train.py
 python test.py
 ```
 
-### Make Saliency Map Use Gradcam
+### Make Saliency Map Using Gradcam
 
 ```
 python gradcam.py
