@@ -44,7 +44,7 @@ class ZeroNet(nn.Module):
             nn.Linear(128, 128),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(144, num_classes),
+            nn.Linear(128, num_classes),
         )
 
     def forward(self,x):
