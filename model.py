@@ -10,6 +10,7 @@ class ZeroNet(nn.Module):
     Model architecture is almost same to VGGnet-11.
     '''
     def __init__(self, num_classes):
+        # Way more parameters than original model
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3,64,3,stride=1,padding=1),
@@ -18,7 +19,7 @@ class ZeroNet(nn.Module):
             nn.Conv2d(64,64,3,stride=1,padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(3,stride=3),
+            nn.MaxPool2d(2,stride=2),
 
             nn.Conv2d(64,128,3,stride=1,padding=1),
             nn.BatchNorm2d(128),
@@ -35,20 +36,12 @@ class ZeroNet(nn.Module):
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2,stride=2),
-
-            nn.Conv2d(256,256,3,stride=1,padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256,256,3,stride=1,padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2,stride=2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(4*4*256, 144),
+            nn.Linear(12*12*256, 128),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(144, 144),
+            nn.Linear(128, 128),
             nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(144, num_classes),
