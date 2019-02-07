@@ -38,13 +38,13 @@ class ZeroNet(nn.Module):
             nn.MaxPool2d(2,stride=2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(12*12*256, 128),
+            nn.Linear(12*12*256, 256),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(128, 128),
+            nn.Linear(256, 256),
             nn.ReLU(inplace=True),
             nn.Dropout(),
-            nn.Linear(128, num_classes),
+            nn.Linear(256, num_classes),
         )
 
     def forward(self,x):
